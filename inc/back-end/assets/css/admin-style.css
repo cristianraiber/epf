@@ -1,0 +1,191 @@
+.toplevel_page_sbp_settings {
+	background: #f3f6f8;
+}
+
+.toplevel_page_sbp_settings #wpcontent {
+	padding: 0;
+}
+
+/* Admin Top Bar */
+.epfw-masthead {
+	background-color: #fff;
+	margin-bottom: 20px;
+	max-height: 60px;
+	box-shadow: 0 1px 0 rgba(200,215,225,0.5), 0 1px 2px #DDD;
+}
+
+.epfw-container {
+	max-width: 720px;
+	margin: 0 auto;
+}
+
+.epfw-masthead-title,
+.epfw-masthead-links {
+	display: inline-block;
+	line-height: 60px;
+}
+
+.epfw-version {
+	background: #efefef;
+	padding: 1px 3px;
+	border-radius: 2px;
+	font-size: 11px;
+	vertical-align: top;
+	margin-left: 8px;
+}
+
+.epfw-masthead-title h1 {
+	font-size: 20px;
+	color: #000;
+	font-weight: 500;
+	margin: 0;
+	padding: 0;
+	float: left;
+	line-height: 60px;
+}
+
+.epfw-masthead-links {
+	float: right;
+}
+	.epfw-masthead-links a {
+		display: inline-block;
+		margin: 0 10px;
+		text-decoration: none;
+	}
+.epfw-masthead .button {
+	vertical-align: middle;
+}
+
+/* Different tab styles*/
+.epfw-tab-wrapper.nav-tab-wrapper,
+.wrap .epfw-tab-wrapper.nav-tab-wrapper {
+	background: #fff;
+	padding: 0;
+	border: 1px solid #ddd;
+	text-align: center;
+	margin-bottom: 20px;
+}
+
+	.epfw-tab.nav-tab {
+		background: #FFF;
+		border: 0;
+		display: inline-block;
+		margin-right: 20px;
+		margin-left: 0;
+		padding: 10px;
+		border-bottom: 2px solid transparent;
+		color: #0073aa;
+		font-weight: 400;
+
+	}
+
+
+		.epfw-tab.nav-tab.nav-tab-active {
+			border-bottom: 2px solid #2e4453;
+			color: #2e4453;
+		}
+
+/* Options Table Rendering */
+.epfw-field-wrapper {
+	background: #FFF;
+	border: 1px solid #DDD;
+	margin: 20px auto;
+}
+	.epfw-field-wrapper .epfw-heading {
+		max-width: 100%;
+		border-bottom: 1px solid #DDD;
+		align-items: center;
+		min-width: 0;
+		padding: 12px 24px 12px 10px;
+		font-size: 14px;
+		line-height: 2;
+		position: relative;
+		color: #2e4453;
+	}
+
+	.epfw-field-group {
+
+	}
+
+	.epfw-field {
+		padding: 15px;
+	}
+
+		.epfw-field + .epfw-field {
+			padding-top: 7px !important;
+		}
+
+		.epfw-field.half-spaced {
+			padding: 7px 15px;
+		}
+
+
+
+	.epfw-separator {
+		border-bottom: 1px solid #DDD;
+		padding: 0;
+	}
+
+
+		.epfw-field-group input[type="checkbox"] {
+			margin: 2px 6px 0 0;
+		}
+
+		.epfw-field-group .description {
+			padding-left: 26px;
+			font-size: 12px;
+			color: #537994;
+		}
+
+		.epfw-field .tooltip-right {
+			float: right;
+			color: #b8cad7;
+		}
+
+		.epfw-field-slide-up-wrapper + .epfw-field-slide-up-wrapper {
+			border-top: 1px solid #DDD;
+
+		}
+
+
+		/* Field type: slider */
+		.epfw-field-slide-up-wrapper.epfw-accordion-visible .epfw-field-slide-up-header {
+			border-bottom: 1px solid #DDD;
+			background-color: #f6fcfe;
+
+		}
+
+		.epfw-field-slide-up-header {
+			display: table;
+			table-layout: fixed;
+			width: 100%;
+			padding: 15px 0;
+		}
+
+		.epfw-accordion-handle,
+		.epfw-accordion-heading {
+			display: table-cell;
+			text-decoration: none;
+		}
+
+		.epfw-accordion-handle {
+			text-align: right;
+			padding-right: 15px;
+			width: 25px;
+
+
+		}
+			.epfw-accordion-handle .dashicons {
+				padding: 1px 1px 0 1px;
+				background-color: #1084ba;
+				border-radius: 50%;
+				font-size: 16px;
+				width: 16px;
+				height: 16px;
+				color: #FFF;
+			}
+
+		.epfw-accordion-heading {
+			padding-left: 15px;
+			text-align: left;
+		}

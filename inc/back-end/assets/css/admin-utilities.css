@@ -1,0 +1,19 @@
+/* Modal Dialogs styling */
+.dialog-widget {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	z-index: 10;
+	background: #FFF;
+	padding: 30px;
+	border: 1px solid #DDD;
+}
+
+/* Rollback link under: plugins.php styling */
+.plugin-title .row-actions .rollback a {
+	font-weight: bold;
+	color: red;
+}
+	body.dialog-container #wpwrap {
+		opacity: .15;
+	}
