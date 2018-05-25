@@ -1,8 +1,7 @@
 <?php
 
-
 $fields = array(
-	'general' => array(
+	'general'         => array(
 		array(
 			'title'  => __( 'WordPress Optimisation', 'sb-pack' ),
 			'type'   => 'field-group',
@@ -417,7 +416,7 @@ $fields = array(
 			),
 		),
 	), // end general tab
-	'minify'  => array(
+	'minify'          => array(
 		array(
 			'title'  => __( 'Minify Settings', 'sb-pack' ),
 			'type'   => 'field-group',
@@ -580,7 +579,7 @@ $fields = array(
 
 	),
 
-	'advanced' => array(
+	'advanced'        => array(
 
 
 		array(
@@ -600,5 +599,12 @@ $fields = array(
 	),
 );
 
+$menu = array(
+	'page_title' => __( 'Welcome to EPFW', 'epfw' ),
+	'menu_title' => __( 'Testing', 'epfw' ),
+	'cap'        => 'manage_options',
+	'slug'       => 'spb_options',
+);
 
-$init = new EPFW_Settings_Page( $fields );
+
+$init = new EPFW_Settings_Page( $fields, $menu );

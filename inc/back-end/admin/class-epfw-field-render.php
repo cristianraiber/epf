@@ -1,9 +1,45 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit; // Exit if accessed directly.
+}
+
 class EPFW_Field_Render {
 
 	protected $_save_in_db_field = '';
-	protected $_db_field_type = '';
+	protected $_db_field_type    = '';
+
+	/**
+	 * Receives an $args array and passes on the info to the required field type for rendering
+	 *
+	 * @since 1.0.0
+	 * @access public
+	 *
+	 * @param array $args
+	 */
+	public function __construct( $args = array() ) {
+
+		if ( isset( $args['type'] ) ) {
+			switch ( $args['type'] ) {
+				case 'text':
+					$this->render_text_field( $args );
+					break;
+				case 'toggle':
+					$this->render_toggle_field( $args );
+					break;
+				case 'js-script-handler':
+					$this->render_js_scripts_handler_field( $args );
+					break;
+				case 'checkbox':
+					$this->render_checkbox_field( $args );
+					break;
+				case 'field-group':
+					$this->render_group( $args );
+					break;
+			}
+		}
+
+	}
 
 	/**
 	 * Function that is responsible for checking if an option has a value in it or not.
@@ -79,7 +115,6 @@ class EPFW_Field_Render {
 
 		$this->_field_description( $args );
 
-
 		?>
 
 		<?php if ( isset( $args['label'] ) ) { ?>
@@ -94,7 +129,8 @@ class EPFW_Field_Render {
 
 		</div> <!--/.epfw-field-->
 
-	<?php }
+	<?php
+	}
 
 	/**
 	 * @param $args
@@ -103,12 +139,12 @@ class EPFW_Field_Render {
 
 	}
 
-	public function render_checkbox_field( $args ) { ?>
+	public function render_checkbox_field( $args ) {
+	?>
 
 		<?php
 
 		$this->_field_description( $args );
-
 
 		?>
 
@@ -130,7 +166,8 @@ class EPFW_Field_Render {
 			<div class="epfw-separator"></div>
 		<?php } ?>
 
-	<?php }
+	<?php
+	}
 
 	/**
 	 * @param $args
@@ -152,7 +189,6 @@ class EPFW_Field_Render {
 
 	public function render_group( $args ) {
 
-
 		if ( isset( $args['fields'] ) ) {
 			foreach ( $args['fields'] as $key => $value ) {
 
@@ -169,9 +205,7 @@ class EPFW_Field_Render {
 						$this->render_slide_up_group( $value );
 					}
 				}
-
 			}
-
 		}
 
 	}
@@ -181,7 +215,6 @@ class EPFW_Field_Render {
 	 */
 	public function render_slide_up_group( $args ) {
 
-
 		echo '<div id="' . esc_attr( $args['id'] ) . '" class="epfw-field-slide-up-wrapper">';
 		echo '<div class="epfw-field-slide-up-header">';
 		echo '<h3 class="epfw-accordion-heading">' . $args['label'] . '</h3>';
@@ -190,7 +223,6 @@ class EPFW_Field_Render {
 		echo '<div class="epfw-accordion-wrapper">';
 
 		foreach ( $args['fields'] as $v ) {
-
 
 			if ( $v['type'] == 'text' ) {
 				$this->render_text_field( $v );

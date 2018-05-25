@@ -1,3 +1,7 @@
+/* #region */
+/**
+* Overwriting WP Core CSS
+*/
 .toplevel_page_sbp_settings {
 	background: #f3f6f8;
 }
@@ -5,8 +9,12 @@
 .toplevel_page_sbp_settings #wpcontent {
 	padding: 0;
 }
+/* #endregion */
 
-/* Admin Top Bar */
+/* #region */
+/**
+* EPFW Plugin Page -  Top Bar 
+*/
 .epfw-masthead {
 	background-color: #fff;
 	margin-bottom: 20px;
@@ -15,7 +23,7 @@
 }
 
 .epfw-container {
-	max-width: 720px;
+	max-width: 960px;
 	margin: 0 auto;
 }
 
@@ -23,15 +31,6 @@
 .epfw-masthead-links {
 	display: inline-block;
 	line-height: 60px;
-}
-
-.epfw-version {
-	background: #efefef;
-	padding: 1px 3px;
-	border-radius: 2px;
-	font-size: 11px;
-	vertical-align: top;
-	margin-left: 8px;
 }
 
 .epfw-masthead-title h1 {
@@ -55,8 +54,11 @@
 .epfw-masthead .button {
 	vertical-align: middle;
 }
+/* #endregion */
 
-/* Different tab styles*/
+
+/* Overwrite WP Core tab styles*/
+/* #region */
 .epfw-tab-wrapper.nav-tab-wrapper,
 .wrap .epfw-tab-wrapper.nav-tab-wrapper {
 	background: #fff;
@@ -84,6 +86,7 @@
 			border-bottom: 2px solid #2e4453;
 			color: #2e4453;
 		}
+	/* #endregion */
 
 /* Options Table Rendering */
 .epfw-field-wrapper {
@@ -101,10 +104,6 @@
 		line-height: 2;
 		position: relative;
 		color: #2e4453;
-	}
-
-	.epfw-field-group {
-
 	}
 
 	.epfw-field {
@@ -128,7 +127,7 @@
 
 
 		.epfw-field-group input[type="checkbox"] {
-			margin: 2px 6px 0 0;
+			margin: 6px 6px 0 0;
 		}
 
 		.epfw-field-group .description {
@@ -138,54 +137,87 @@
 		}
 
 		.epfw-field .tooltip-right {
+			margin-top: 6px;
 			float: right;
 			color: #b8cad7;
 		}
 
 		.epfw-field-slide-up-wrapper + .epfw-field-slide-up-wrapper {
 			border-top: 1px solid #DDD;
-
 		}
 
+		
 
-		/* Field type: slider */
+
+/* Field type: slider */
+/* #region */
 		.epfw-field-slide-up-wrapper.epfw-accordion-visible .epfw-field-slide-up-header {
 			border-bottom: 1px solid #DDD;
 			background-color: #f6fcfe;
 
 		}
 
-		.epfw-field-slide-up-header {
-			display: table;
-			table-layout: fixed;
-			width: 100%;
-			padding: 15px 0;
+		.epfw-accordion-wrapper {
+			display: none;
 		}
+
+		.epfw-field-slide-up-header {
+			width: 100%;
+		}
+
+            .epfw-field-slide-up-header:hover {
+                cursor: pointer;
+                background-color: #f6fcfe;
+            }
 
 		.epfw-accordion-handle,
 		.epfw-accordion-heading {
-			display: table-cell;
 			text-decoration: none;
+            line-height: 50px;
 		}
 
 		.epfw-accordion-handle {
-			text-align: right;
-			padding-right: 15px;
-			width: 25px;
-
-
+			margin-right: 15px;
+			float: right;
 		}
+
 			.epfw-accordion-handle .dashicons {
-				padding: 1px 1px 0 1px;
+				padding: 2px 0 0 1px;
 				background-color: #1084ba;
 				border-radius: 50%;
 				font-size: 16px;
 				width: 16px;
 				height: 16px;
 				color: #FFF;
+                vertical-align: middle;
 			}
 
 		.epfw-accordion-heading {
 			padding-left: 15px;
-			text-align: left;
+            display: inline-block;
+            margin: 0;
 		}
+		/* #endregion */
+
+/* EPFW Utilities */
+/* #region */
+.epfw-float-left {
+	float: left;
+}
+
+.epfw-float-right {
+	float: right;
+}
+/* #endregion */
+
+.epfw-changelog {
+	border-top: 1px solid #DDD;
+	border-bottom: 1px solid #DDD;
+	padding: 20px 0;
+	text-align: center;
+}
+	.epfw-changelog-version,
+	.epfw-changelog-link {
+		margin: 0 5px;
+	}
+

@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @since 1.0.0
  */
-class Rollback {
+class EPFW_Rollback {
 
 	/**
 	 * Package URL.
@@ -127,10 +127,10 @@ class Rollback {
 			$update_plugins = new \stdClass();
 		}
 
-		$plugin_info = new \stdClass();
+		$plugin_info              = new \stdClass();
 		$plugin_info->new_version = $this->version;
-		$plugin_info->slug = $this->plugin_slug;
-		$plugin_info->package = $this->package_url;
+		$plugin_info->slug        = $this->plugin_slug;
+		$plugin_info->package     = $this->package_url;
 
 		$update_plugins->response[ $this->plugin_name ] = $plugin_info;
 
@@ -151,10 +151,10 @@ class Rollback {
 		$logo_url = ELEMENTOR_ASSETS_URL . 'images/logo-panel.svg';
 
 		$upgrader_args = [
-			'url' => 'update.php?action=upgrade-plugin&plugin=' . rawurlencode( $this->plugin_name ),
+			'url'    => 'update.php?action=upgrade-plugin&plugin=' . rawurlencode( $this->plugin_name ),
 			'plugin' => $this->plugin_name,
-			'nonce' => 'upgrade-plugin_' . $this->plugin_name,
-			'title' => '<img src="' . $logo_url . '" alt="EPFW logo">' . __( 'Rollback to Previous Version', 'epfw' ),
+			'nonce'  => 'upgrade-plugin_' . $this->plugin_name,
+			'title'  => '<img src="' . $logo_url . '" alt="EPFW logo">' . __( 'Rollback to Previous Version', 'epfw' ),
 		];
 
 		$this->print_inline_style();

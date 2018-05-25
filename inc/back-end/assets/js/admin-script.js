@@ -1,147 +1,118 @@
-/**
- * @todo: fix accordions
- */
-(function( $ ) {
+/*jshint esversion: 6 */
+(function ($) {
 
-	'use strict';
+  'use strict';
 
-	/**
-	 * Function used to handle admin UI postboxes
-	 */
-	function admin_postboxes() {
+  const EPFWBackEndObject = {
 
-		if ( typeof postboxes !== 'undefined' ) { // sanity check
-			postboxes.add_postbox_toggles( pagenow );
+    /**
+     * Function used to handle admin UI postboxes
+     */
+    admin_postboxes: function () {
 
-			// set cursor to pointer
-			$( '.postbox .hndle' ).css( 'cursor', 'pointer' );
-		}
-	}
+      if (typeof postboxes !== 'undefined') { // sanity check
+        postboxes.add_postbox_toggles(pagenow);
 
-	function admin_accordions() {
-		var handle = $( '.epfw-accordion-handle' );
-		var wrapper = $( '.epfw-accordion-wrapper' );
-		var main_wrapper = $( '.epfw-field-slide-up-wrapper' );
+        // set cursor to pointer
+        $('.postbox .hndle').css('cursor', 'pointer');
+      }
+    },
 
-		//hide by default
-		$( wrapper ).hide();
+    /**
+     * Handle accordion visibility
+     */
+    admin_accordions: function () {
 
-		$( handle ).on( 'click', function() {
-			//check visibility
-			if ( $( wrapper ).is( ':visible' ) ) {
-				$( wrapper ).hide( 150 );
-				$( main_wrapper ).removeClass( 'epfw-accordion-visible' );
-			} else {
-				$( main_wrapper ).addClass( 'epfw-accordion-visible' );
-				$( wrapper ).show( 200 );
-			}
-		} );
-	}
+      let main_wrapper = '.epfw-field-slide-up-wrapper'; // the main wrapper 
+      let accordion_wrapper = '.epfw-accordion-wrapper'; // actual accordion wrapper, that is nested and holds the actual contents
+      let accordion_visibility = 'epfw-accordion-visible'; // not a CSS selector, but an existing CSS class that adds display: none
 
-	/**
-	 * Function used for the image compression slider under "Image Optimization"
-	 */
-	function admin_jquery_sliders() {
+      $(main_wrapper).click(function (e) {
 
-		var slider_selector = ".sbp-slider";
-		var slider_amount = ".sbp-amount";
-		var slider_integer = "#sbp_integer";
+        e.preventDefault();
 
-		if ( $( slider_selector ).length > 0 ) {
+        if ($(this).hasClass(accordion_visibility)) {
+          $(this).removeClass(accordion_visibility);
+          $(this).find(accordion_wrapper).hide(250);
+        } else {
+          $(this).addClass(accordion_visibility);
+          $(this).find(accordion_wrapper).show(250);
+        }
+      });
+    },
 
-			$( slider_selector ).slider( {
-				value: jpegCompression,
-				min: 0,
-				max: 100,
-				step: 1,
-				slide: function( event, ui ) {
-					jQuery( slider_amount ).val( ui.value );
-					jQuery( slider_integer ).val( ui.value );
-				}
-			} );
+    /**
+     * Handle UI tab switching via jQuery instead of relying on CSS only
+     */
+    admin_tab_switching: function () { /** @todo: find a smarter way of writing this */
 
-			$( slider_amount ).val( $( slider_selector ).slider( "value" ) );
-		}
-	}
+      let nav_tab_selector = '.epfw-tab';
+      let turn_into_tab = '.epfw-turn-into-tab';
+      /**
+       * Default tab handling
+       */
 
-	/**
-	 * Handle UI tab switching via jQuery instead of relying on CSS only
-	 */
-	function admin_tab_switching() {
+      // make the first tab active by default
+      $(nav_tab_selector + ':first').addClass('nav-tab-active');
 
-		var nav_tab_selector = '.nav-tab-wrapper a';
+      // make all the tabs, except the first one hidden
+      $(turn_into_tab).not(':first').hide();
 
-		/**
-		 * Default tab handling
-		 */
+      /**
+       * Listen for click events on nav-tab links
+       */
+      $(nav_tab_selector).on('click', function (event) {
+        
+        $(nav_tab_selector).removeClass('nav-tab-active'); // remove active class from all nav_tab_selectors
+        $(this).addClass('nav-tab-active'); // add class to currently clicked selector
 
-		// make the first tab active by default
-		$( nav_tab_selector + ':first' ).addClass( 'nav-tab-active' );
+        let clicked_tab = $(this).attr('href');
 
-		// get the first tab href
-		var initial_tab_href = $( nav_tab_selector + ':first' ).attr( 'href' );
+        $('.epfw-turn-into-tab').each(function () {
+          if ('#' + $(this).attr('id') !== clicked_tab) {
+            $(this).hide();
+          }
 
-		// make all the tabs, except the first one hidden
-		$( '.epfw-turn-into-tab' ).each( function( index, value ) {
-			if ( '#' + $( this ).attr( 'id' ) !== initial_tab_href ) {
-				$( this ).hide();
-			}
-		} );
+          $(clicked_tab).fadeIn(150);
 
-		/**
-		 * Listen for click events on nav-tab links
-		 */
-		$( nav_tab_selector ).click( function( event ) {
+        });
+      });
+    },
 
-			$( nav_tab_selector ).removeClass( 'nav-tab-active' ); // remove class from previous selector
-			$( this ).addClass( 'nav-tab-active' ).blur(); // add class to currently clicked selector
+    /**
+     * Function used to instantiate the DialogsManager
+     * It basically creates a "screen" used for displaying the plugin rollback progress
+     */
+    rollback: function () {
 
-			var clicked_tab = $( this ).attr( 'href' );
+      $('.epfw-rollback-button').on('click', function (event) {
 
-			$( '.epfw-turn-into-tab' ).each( function( index, value ) {
-				if ( '#' + $( this ).attr( 'id' ) !== clicked_tab ) {
-					$( this ).hide();
-				}
+        event.preventDefault();
 
-				$( clicked_tab ).fadeIn();
+        let dialogsManager = new DialogsManager.Instance();
 
-			} );
+        dialogsManager.createWidget('confirm', {
+          headerMessage: EPFWAdminConfig.i18n.rollback_to_previous_version,
+          message: EPFWAdminConfig.i18n.rollback_confirm,
+          strings: {
+            confirm: EPFWAdminConfig.i18n.yes,
+            cancel: EPFWAdminConfig.i18n.cancel
+          },
+          onConfirm: function () {
+            $(this).addClass('loading');
 
-			// prevent default behavior
-			event.preventDefault();
+            location.href = $(this).attr('href');
+          }
+        }).show();
+      });
+    }
+  };
 
-		} );
-	}
+  $(document).ready(function () {
+    EPFWBackEndObject.admin_postboxes();
+    EPFWBackEndObject.admin_tab_switching();
+    EPFWBackEndObject.admin_accordions();
+    EPFWBackEndObject.rollback();
+  });
 
-	function rollback() {
-		$( '.epfw-rollback-button' ).on( 'click', function( event ) {
-			event.preventDefault();
-
-			var $this = $( this ),
-				dialogsManager = new DialogsManager.Instance();
-
-			dialogsManager.createWidget( 'confirm', {
-				headerMessage: ElementorAdminConfig.i18n.rollback_to_previous_version,
-				message: ElementorAdminConfig.i18n.rollback_confirm,
-				strings: {
-					confirm: ElementorAdminConfig.i18n.yes,
-					cancel: ElementorAdminConfig.i18n.cancel
-				},
-				onConfirm: function() {
-					$this.addClass( 'loading' );
-
-					location.href = $this.attr( 'href' );
-				}
-			} ).show();
-		} );
-	}
-
-	$( document ).ready( function() {
-		admin_postboxes();
-		admin_jquery_sliders();
-		admin_tab_switching();
-		admin_accordions();
-		rollback();
-	} );
-
-})( jQuery );
+})(jQuery);
