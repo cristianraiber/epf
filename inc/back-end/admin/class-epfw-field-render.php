@@ -70,28 +70,6 @@ class EPFW_Field_Render {
 		}
 	}
 
-	/**
-	 * Sanity check for DB schema
-	 *
-	 * @param array $args
-	 *
-	 * @return bool
-	 */
-	protected function check_for_db_schema( $args = array() ) {
-
-		if ( isset( $args['db_schema'] ) && is_array( $args['db_schema'] ) ) { // mandatory to have a save_in_db_field as long as db_schema is defined
-
-			if ( isset( $args['db_schema']['save_in_db_field'] ) ) {
-				$this->_save_in_db_field = $args['db_schema']['save_in_db_field'];
-
-				if ( isset( $args['db_schema']['db_field_type'] ) ) {
-					$this->_db_field_type = $args['db_schema']['db_field_type'];
-				}
-			}
-		} else { // no DB schema defined
-			return false;
-		}
-	}
 
 	protected function _field_description( $description ) {
 
@@ -100,9 +78,7 @@ class EPFW_Field_Render {
 		} else {
 			echo '<div class="epfw-field">';
 		}
-
 	}
-
 
 	/**
 	 * Function responsible for rendering text field types
@@ -125,7 +101,7 @@ class EPFW_Field_Render {
 			<span class="tooltip-right" data-tooltip="<?php echo esc_attr( $args['tooltip'] ); ?>"> <i class="dashicons dashicons-editor-help"></i></span>
 		<?php } ?>
 
-		<input id="<?php echo esc_attr( $args['id'] ); ?>" class="regular-text" name="<?php echo esc_attr( EPFW__SETTINGS_TABLE ) . '[' . esc_attr( $args['id'] ) . ']'; ?>" type="textarea" value="<?php echo sanitize_text_field( $this->get_option_value( $args['id'], EPFW__SETTINGS_TABLE ) ); ?>">
+		<input id="<?php echo esc_attr( $args['id'] ); ?>" class="regular-text" name="<?php echo esc_attr( 'sbp_settings' ) . '[' . esc_attr( $args['id'] ) . ']'; ?>" type="textarea" value="<?php echo sanitize_text_field( $this->get_option_value( $args['id'], 'sbp_settings' ) ); ?>">
 
 		</div> <!--/.epfw-field-->
 
@@ -148,7 +124,7 @@ class EPFW_Field_Render {
 
 		?>
 
-		<input id="<?php echo esc_attr( $args['id'] ); ?>" type="checkbox" name="<?php echo esc_attr( EPFW__SETTINGS_TABLE ) . '[' . esc_attr( $args['id'] ) . ']'; ?>" <?php checked( 1, $this->get_option_value( $args['id'], EPFW__SETTINGS_TABLE ), true ); ?> value="1">
+		<input id="<?php echo esc_attr( $args['id'] ); ?>" type="checkbox" name="<?php echo esc_attr( 'sbp_settings' ) . '[' . esc_attr( $args['id'] ) . ']'; ?>" <?php checked( 1, $this->get_option_value( $args['id'], 'sbp_settings' ), true ); ?> value="1">
 
 		<?php if ( isset( $args['label'] ) ) { ?>
 			<label for="<?php echo esc_attr( $args['id'] ); ?>"><?php echo esc_html( $args['label'] ); ?></label>

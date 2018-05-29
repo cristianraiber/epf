@@ -23,13 +23,11 @@
      */
     admin_accordions: function () {
 
-      let main_wrapper = '.epfw-field-slide-up-wrapper'; // the main wrapper 
+      let main_wrapper = '.epfw-field-slide-up-wrapper'; // the main wrapper
       let accordion_wrapper = '.epfw-accordion-wrapper'; // actual accordion wrapper, that is nested and holds the actual contents
       let accordion_visibility = 'epfw-accordion-visible'; // not a CSS selector, but an existing CSS class that adds display: none
 
-      $(main_wrapper).click(function (e) {
-
-        e.preventDefault();
+      $(main_wrapper).click(function () {
 
         if ($(this).hasClass(accordion_visibility)) {
           $(this).removeClass(accordion_visibility);
@@ -62,7 +60,7 @@
        * Listen for click events on nav-tab links
        */
       $(nav_tab_selector).on('click', function (event) {
-        
+
         $(nav_tab_selector).removeClass('nav-tab-active'); // remove active class from all nav_tab_selectors
         $(this).addClass('nav-tab-active'); // add class to currently clicked selector
 

@@ -148,7 +148,7 @@ class EPFW_Rollback {
 	protected function upgrade() {
 		require_once( ABSPATH . 'wp-admin/includes/class-wp-upgrader.php' );
 
-		$logo_url = ELEMENTOR_ASSETS_URL . 'images/logo-panel.svg';
+		$logo_url = EPFW__PLUGINS_URL . 'inc/back-end/assets/img/icon-128x128.jpg';
 
 		$upgrader_args = [
 			'url'    => 'update.php?action=upgrade-plugin&plugin=' . rawurlencode( $this->plugin_name ),
