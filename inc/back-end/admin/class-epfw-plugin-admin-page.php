@@ -147,71 +147,64 @@ class EPFW_Plugin_Admin_Page {
 	 *
 	 */
 	public function add_and_register_options() {
+
+		 /**
+		 * @see: https://developer.wordpress.org/reference/functions/register_setting/
+		 *
+		 * <code>
+		 * register_setting(
+		 * string $option_group,
+		 * string $option_name,
+		 * array $args = array()
+		 * )
+		 * </code>
+		 *
+		 * - option_group, stays the same for all the options, this is what ties them together across tabs
+		 */
+		register_setting(
+			esc_html( $this->settings_table_name ),
+			esc_html( $this->settings_table_name ),
+			array(
+				'sanitize_callback' => array(
+					$this,
+					'sanitize_field',
+				),
+				'show_in_rest'      => false,
+			)
+		);
+
 		if ( is_array( $this->field_args ) && ! empty( $this->field_args ) ) {
 
-			foreach ( $this->field_args as $tab_name => $settings_array_main ) {
+			foreach ( $this->field_args as $settings_array_keys => $settings_array_values ) {
 
-				if ( is_array( $settings_array_main ) && ! empty( $settings_array_main ) ) {
+				/**
+					 * @see: https://codex.wordpress.org/Function_Reference/add_settings_section#Parameters
+					 *
+					 * <code>
+					 * add_settings_section(
+					 * (string) (required) $id  String for use in the 'id' attribute of tags.
+					 * (string) (required) $title Title of the section.
+					 * (string) (required) $callback Function that fills the section with the desired content. The function should echo its output.
+					 * (string) (required) $page The menu page on which to display this section
+					 * );
+					 * </code>
+					 *
+					 * - Generate section title from tab; ex: general-options will turn into General Options
+					 * - No callback function, since we're not using any section descriptions
+					 */
+				add_settings_section(
+					esc_html( (string) $settings_array_values['tab_name'] ),
+					esc_html( $this->format_asset_name( $settings_array_values['tab_name'] ) ),
+					null,
+					esc_html( $this->settings_table_name )
+				);
 
-					foreach ( $settings_array_main as $settings_array_id => $settings_array_value ) {
+				if ( isset( $settings_array_values['type'] ) &&
+					'field-group' === $settings_array_values['type'] &&
+					isset( $settings_array_values['fields'] ) ) {
+					foreach ( $settings_array_values['fields'] as $inner_array ) {
 
 						/**
-							 * @todo: asta ar trebui rescris, iterarea ar trebui facuta aici pt. field type-urile de tip field-group
-							 */
-						if ( 'field-group' == $settings_array_id['type'] ) {
-							if ( isset( $settings_array_id['fields'] ) ) {
-								$settings_array = $settings_array_value['fields'];
-							}
-						} else {
-							$settings_array = $settings_array_value;
-						}
-					}
-
-					/**
-			 * @see: https://developer.wordpress.org/reference/functions/register_setting/
-			 *
-			 * <code>
-			 * register_setting(
-			 * string $option_group,
-			 * string $option_name,
-			 * array $args = array()
-			 * )
-			 * </code>
-			 *
-			 * - option_group, stays the same for all the options, this is what ties them together across tabs
-			 */
-					register_setting(
-						esc_html( $this->settings_table_name ),
-						esc_html( $this->settings_table_name ),
-						array(
-							$this,
-							'sanitize_field',
-						)
-					);
-
-					/**
-			 * @see: https://codex.wordpress.org/Function_Reference/add_settings_section#Parameters
-			 *
-			 * <code>
-			 * add_settings_section(
-			 * (string) (required) $id  String for use in the 'id' attribute of tags.
-			 * (string) (required) $title Title of the section.
-			 * (string) (required) $callback Function that fills the section with the desired content. The function should echo its output.
-			 * (string) (required) $page The menu page on which to display this section
-			 * );
-			 * </code>
-			 *
-			 * - Generate section title from tab; ex: general-options will turn into General Options
-			 * - No callback function, since we're not using any section descriptions
-			 */
-					add_settings_section(
-						esc_html( (string) $tab_name ),
-						esc_html( $this->format_asset_name( $tab_name ) ),
-						null,
-						esc_html( $this->settings_table_name )
-					);
-
-					/**
 					 * @see: https://codex.wordpress.org/Function_Reference/add_settings_field
 					 *
 					 * <code>
@@ -228,22 +221,21 @@ class EPFW_Plugin_Admin_Page {
 					 * - $settings_array['label/title'] - if we're missing the 'label' it means we're looping over the main "well" element title
 					 * - Field callback function; will call render_field() and takes the $settings_array as a param
 					 */
-					add_settings_field(
-						esc_html( (string) $this->settings_table_name . '[' . $settings_array_id . ']' ),
-						isset( $settings_array['label'] ) ? $settings_array['label'] : $settings_array['title'],
-						array(
-							$this,
-							'render_field',
-						),
-						esc_html( $this->settings_table_name ),
-						esc_html( (string) $tab_name ),
-						$settings_array
-					);
-
+						add_settings_field(
+							esc_html( (string) $this->settings_table_name . '[' . $inner_array['id'] . ']' ),
+							isset( $inner_array['label'] ) ? $inner_array['label'] : $inner_array['title'],
+							array(
+								$this,
+								'render_field',
+							),
+							esc_html( $this->settings_table_name ),
+							esc_html( (string) $settings_array_values['tab_name'] ),
+							$settings_array_values
+						);
+					}
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -307,29 +299,29 @@ class EPFW_Plugin_Admin_Page {
 	 */
 	public function render_settings_page() { ?>
 
-		<div class="epfw-masthead">
-			<div class="epfw-container">
-				<?php
+			<div class="epfw-masthead">
+				<div class="epfw-container">
+					<?php
 					do_action( 'epfw_print_masthead_before' );
 					do_action( 'epfw_print_masthead' );
 					do_action( 'epfw_print_masthead_after' );
-				?>
-			</div><!--/.epfw-container-->
-		</div><!--/.epfw-admin-top-bar-->
-		<div class="wp-clearfix"></div>
+					?>
+				</div><!--/.epfw-container-->
+			</div><!--/.epfw-admin-top-bar-->
+			<div class="wp-clearfix"></div>
 
-		<div class="wrap epfw-container epfw-wrap">
-			<?php
+			<div class="wrap epfw-container epfw-wrap">
+				<?php
 				do_action( 'epfw_print_form_before' );
 				do_action( 'epfw_print_form' );
 				do_action( 'epfw_print_form_after' );
-			?>
-		</div>
+				?>
+			</div>
 
-		<?php
-		do_action( 'epfw_print_changelog_before' );
-		do_action( 'epfw_print_changelog' );
-		do_action( 'epfw_print_changelog_after' );
+			<?php
+			do_action( 'epfw_print_changelog_before' );
+			do_action( 'epfw_print_changelog' );
+			do_action( 'epfw_print_changelog_after' );
 	}
 
 	/**
@@ -350,16 +342,43 @@ class EPFW_Plugin_Admin_Page {
 		//print_r( $input );
 		//exit;
 
-		return $input;
+		foreach ( $input as $k => $v ) {
+			$result[] = array_search( $v, $this->field_args );
+		}
+
+		echo '<pre>';
+		print_r( $result );
+		echo '</pre>';
+
+		exit;
+	}
+
+	function search_items_by_key( $array, $key ) {
+		$results = array();
+
+		if ( is_array( $array ) ) {
+
+			$array = array_flip( $array );
+
+			if ( isset( $array[ $key ] ) && key( $array ) == $key ) {
+				$results[] = $array[ $key ];
+			}
+
+			foreach ( $array as $sub_array ) {
+				$results = array_merge( $results, $this->search_items_by_key( array_flip( $sub_array ), $key ) );
+			}
+		}
+
+		return  $results;
 	}
 
 	/**
-	 *
-	 * This is the function responsible with rendering the actual field types
-	 *
-	 *
-	 * @param $args
-	 */
+ *
+ * This is the function responsible with rendering the actual field types
+ *
+ *
+ * @param $args
+ */
 	public function render_field( $args ) {
 
 		if ( isset( $args['type'] ) ) {
@@ -480,7 +499,7 @@ class EPFW_Plugin_Admin_Page {
 
 		/*
 		if ( isset( $_POST[ $this->settings_field ] ) && check_admin_referer( 'kiwi_settings_nonce', '_wpnonce' ) ) {
-			echo '<div class="notice updated is-dismissible">' . __( 'Settings updated successfully!', 'kiwi-social-share' ) . '</div>';
+		echo '<div class="notice updated is-dismissible">' . __( 'Settings updated successfully!', 'kiwi-social-share' ) . '</div>';
 		}
 		*/
 	}
@@ -629,9 +648,9 @@ class EPFW_Plugin_Admin_Page {
 	public function print_options_form() {
 		echo '<form method="post" action="options.php">';
 
-			settings_fields( $this->settings_table_name );
-			$this->do_settings_sections( $this->settings_table_name );
-			do_action( 'epfw_print_form_buttons' );
+		settings_fields( $this->settings_table_name );
+		$this->do_settings_sections( $this->settings_table_name );
+		do_action( 'epfw_print_form_buttons' );
 
 		echo '</form>';
 	}
@@ -684,7 +703,7 @@ class EPFW_Plugin_Admin_Page {
 
 		// Masthead title
 		echo '<div class="epfw-masthead-title">';
-			echo '<h1>' . esc_html( $masthead['title'] ) . '</h1>';
+		echo '<h1>' . esc_html( $masthead['title'] ) . '</h1>';
 		echo '</div>';
 
 		// Masthead links
@@ -801,7 +820,7 @@ class EPFW_Plugin_Admin_Page {
 	 * @param $args
 	 */
 	public function render_text_field( $args ) {
-	?>
+		?>
 
 		<?php
 
@@ -832,7 +851,7 @@ class EPFW_Plugin_Admin_Page {
 	}
 
 	public function render_checkbox_field( $args ) {
-	?>
+		?>
 
 		<?php
 
