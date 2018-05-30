@@ -59,8 +59,7 @@ define( 'EPFW__CHANGELOG_HREF', 'https://github.com/MachoThemes/simple-author-bo
 
 // back-end includes
 require EPFW__PLUGINS_PATH . 'inc/back-end/sigma/rollback/class-epfw-rollback.php';
-require EPFW__PLUGINS_PATH . 'inc/back-end/admin/class-epfw-field-render.php';
-require EPFW__PLUGINS_PATH . 'inc/back-end/admin/class-epfw-settings-page.php';
+require EPFW__PLUGINS_PATH . 'inc/back-end/admin/class-epfw-plugin-admin-page.php';
 
 // init
-require EPFW__PLUGINS_PATH . 'bootstrap.php';
+require EPFW__PLUGINS_PATH . 'init.php';
