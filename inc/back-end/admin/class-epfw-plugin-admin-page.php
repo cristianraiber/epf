@@ -5,8 +5,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * @todo: fix sanitize callback - sanitize_field
- * @todo: check if it's the last field in a loop that has separator set to true
+ * @todo: fix sanitize callback - sanitize_field (should also make sure this hooks into add_settings_errors); https://wordpress.stackexchange.com/a/78045
+ * @todo: add defaults for each field type rendering function
+ * @todo: add default values for each field in init.php
  */
 
 
@@ -25,7 +26,7 @@ class EPFW_Plugin_Admin_Page {
 	 *
 	 * @var string $settings_table_name.
 	 */
-	protected $settings_table_name;
+	protected $settings_table_name = '';
 
 	/**
 	 * Page Hook Suffix.
@@ -93,6 +94,12 @@ class EPFW_Plugin_Admin_Page {
 		add_action( 'epfw_print_form_buttons', array( $this, 'print_form_buttons' ) );
 		add_action( 'epfw_print_changelog', array( $this, 'print_changelog' ) );
 		add_action( 'epfw_print_masthead', array( $this, 'print_masthead' ) );
+
+		/**
+		 * WP Core function for showing admin notices
+		 * @see: https://codex.wordpress.org/Function_Reference/settings_errors
+		 */
+		add_action( 'epfw_print_masthead_after', 'settings_errors' );
 
 	}
 
@@ -256,6 +263,7 @@ class EPFW_Plugin_Admin_Page {
 		 * menu defaults array
 		 *
 		 * @uses apply_filters epfw_menu_defaults
+		 * @uses apply_filters epfw_menu_args
 		 */
 		$menu_defaults = apply_filters(
 			'epfw_menu_defaults', array(
@@ -376,7 +384,8 @@ class EPFW_Plugin_Admin_Page {
 	}
 
 	/**
-	 * Function to load back-end specific JS Scripts
+	 * Function to load LOCAL back-end specific JS Scripts
+	 * LOCAL = (only on the plugin page)
 	 *
 	 * @param $hook
 	 */
@@ -395,12 +404,17 @@ class EPFW_Plugin_Admin_Page {
 		wp_enqueue_script( 'epfw-admin-scripts' );
 	}
 
-	public function global_backend_scripts( $hook ) {
+	/**
+	 * Function used to load GLOBAL JS scripts
+	 * GLOBAL = ( anywhere in the admin dashboard )
+	 */
+	public function global_backend_scripts() {
 
 	}
 
 	/**
 	 * Function to load LOCAL back-end specific stylesheets
+	 * LOCAL = (only in the plugin page)
 	 *
 	 * @param $hook
 	 */
@@ -420,11 +434,11 @@ class EPFW_Plugin_Admin_Page {
 	}
 
 	/**
-	 * Function to load GLOBAL back-end specific stylesheets
+	 * Function used to load GLOBAL CSS stylesheets
+	 *  GLOBAL = ( anywhere in the admin dashboard )
 	 *
-	 * @param $hook
 	 */
-	public function global_backend_styles( $hook ) {
+	public function global_backend_styles() {
 
 		// register styles
 		wp_register_style( 'epfw-wpadmin-utilities', EPFW__PLUGINS_URL . 'inc/back-end/assets/css/admin-utilities.css', false, EPFW__PLUGIN_VERSION );
@@ -436,13 +450,6 @@ class EPFW_Plugin_Admin_Page {
 
 	/**
 	 * Helper function for creating admin messages
-	 *
-	 * @param (string) $message The message to echo
-	 * @param (string) $msgclass The message class
-	 *
-	 * @return the message
-	 *
-	 * $msgclass possible values: info / error
 	 *
 	 */
 	public function show_admin_notice() {
