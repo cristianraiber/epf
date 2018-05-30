@@ -609,5 +609,5 @@ $epfw_menu_args = array(
 );
 
 
-$init = new EPFW_Settings_Page( $epfw_fields, $epfw_menu_args );
+$init = new EPFW_Plugin_Admin_Page( $epfw_fields, $epfw_menu_args );
 

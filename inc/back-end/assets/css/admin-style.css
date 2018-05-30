@@ -2,11 +2,11 @@
 /**
 * Overwriting WP Core CSS
 */
-.toplevel_page_sbp_options {
+.epfw-plugin-page {
 	background: #f3f6f8;
 }
 
-.toplevel_page_sbp_options #wpcontent {
+.epfw-plugin-page #wpcontent {
 	padding: 0;
 }
 /* #endregion */

@@ -66,6 +66,9 @@ class EPFW_Plugin_Admin_Page {
 		// add the menu page
 		add_action( 'admin_menu', array( $this, 'register_menu_page' ) );
 
+		// add a custom body class
+		add_filter( 'admin_body_class', array( $this, 'body_class' ) );
+
 		// add & register options through add_
 		add_action( 'admin_init', array( $this, 'add_and_register_options' ) );
 
@@ -92,6 +95,23 @@ class EPFW_Plugin_Admin_Page {
 
 	}
 
+	/**
+	 * Used to add a custom CSS class to the admin_body
+	 *
+	 * @param [type] $classes
+	 * @uses apply_filters epfw_admin_body_class
+	 * @return string
+	 */
+	public function body_class( $classes ) {
+
+		$current_screen = get_current_screen();
+
+		if ( $current_screen->id === $this->page_hook_suffix ) {
+			$classes .= ' epfw-plugin-page ';
+		}
+
+		return apply_filters( 'epfw_admin_body_class', $classes );
+	}
 
 	/**
 	 * Add an extra link under plugins.php for our plugin.
@@ -780,7 +800,8 @@ class EPFW_Plugin_Admin_Page {
 	 *
 	 * @param $args
 	 */
-	public function render_text_field( $args ) { ?>
+	public function render_text_field( $args ) {
+	?>
 
 		<?php
 
