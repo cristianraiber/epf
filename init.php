@@ -1,14 +1,10 @@
 <?php
 
-$epfw_fields = array(
-
-	array(
-		'tab_name' => __( 'General', 'epfw' ),
-		'title'    => __( 'WordPress Optimisation', 'epfw' ),
-		'type'     => 'field-group',
-		'fields'   => array(
-			array(
-				'id'          => 'query_strings',
+	$epfw_fields['general'] = array(
+		'tab'    => __( 'General', 'epfw' ),
+		'title'  => __( 'WordPress Optimisation', 'epfw' ),
+		'fields' => array(
+			'query_strings' => array(
 				'label'       => __( 'Remove query strings from scripts', 'epfw' ),
 				'description' => __( 'When turned ON, query strings will be removed from script URLs.', 'epfw' ),
 				'tooltip'     => __( 'This option move all scripts to the footer while keeping stylesheets in the header to improve page loading speed and get a higher score on the major speed testing sites such as GTmetrix or other website speed testing tools.', 'epfw' ),
@@ -16,8 +12,7 @@ $epfw_fields = array(
 				'separator'   => true,
 			),
 
-			array(
-				'id'          => 'font_awesome',
+			'font_awesome'  => array(
 				'label'       => __( 'Removes extra Font Awesome styles', 'epfw' ),
 				'description' => __( 'When turned ON, all extra Font Awesome styles will be removed.', 'epfw' ),
 				'tooltip'     => __( 'Use this option only if your theme uses Font Awesome, to prevent other plugins that uses Font Awesome, to add their stylesheets to your theme. In other words, this option removes extra Font Awesome stylesheets added to your theme by certain plugins.', 'epfw' ),
@@ -25,6 +20,7 @@ $epfw_fields = array(
 				'separator'   => true,
 			),
 
+			/*
 			array(
 				'label'     => __( 'Requests', 'epfw' ),
 				'type'      => 'slide-up-group',
@@ -86,10 +82,9 @@ $epfw_fields = array(
 						'type'        => 'checkbox',
 						'separator'   => true,
 					),
-
-
 				),
 			),
+
 			array(
 				'label'  => __( 'Tags', 'epfw' ),
 				'type'   => 'slide-up-group',
@@ -136,6 +131,7 @@ $epfw_fields = array(
 
 				),
 			),
+
 			array(
 				'label'  => __( 'Admin', 'epfw' ),
 				'type'   => 'slide-up-group',
@@ -225,6 +221,7 @@ $epfw_fields = array(
 
 				),
 			),
+
 			array(
 				'label'  => __( 'SEO', 'epfw' ),
 				'type'   => 'slide-up-group',
@@ -245,6 +242,7 @@ $epfw_fields = array(
 
 				),
 			),
+
 			array(
 				'label'  => __( 'Others', 'epfw' ),
 				'type'   => 'slide-up-group',
@@ -328,6 +326,7 @@ $epfw_fields = array(
 
 				),
 			),
+
 			array(
 				'label'  => __( 'WordPress Widgets', 'epfw' ),
 				'type'   => 'slide-up-group',
@@ -414,193 +413,17 @@ $epfw_fields = array(
 
 				),
 			),
+			*/
 		),
-	), // end general
-
-	array(
-		'tab_name' => __( 'Minify', 'epfw' ),
-		'title'    => __( 'Minify Settings', 'epfw' ),
-		'type'     => 'field-group',
-		'fields'   => array(
-			array(
-				'id'    => 'minify_html_js',
-				'label' => __( 'Minify HTML and JS', 'epfw' ),
-				'type'  => 'checkbox',
-			),
-
-			array(
-				'id'    => 'sbp_css_minify',
-				'label' => __( 'Minify all CSS styles', 'epfw' ),
-				'type'  => 'checkbox',
-			),
-
-			array(
-				'id'    => 'sbp_css_async',
-				'label' => __( 'Load CSS asynchronously', 'epfw' ),
-				'type'  => 'checkbox',
-
-			),
-
-			array(
-				'id'    => 'sbp_footer_css',
-				'label' => __( 'Insert all CSS styles inline to the footer', 'epfw' ),
-				'type'  => 'checkbox',
-
-			),
-
-			array(
-				'id'    => 'sbp_is_mobile',
-				'label' => __( 'Disable all above CSS options on mobile devices', 'epfw' ),
-				'type'  => 'checkbox',
-
-			),
-		),
-	), // end minify
-
-	array(
-		'tab_name' => __( 'Database', 'epfw' ),
-		'title'    => __( 'Database Optimisations', 'epfw' ),
-		'type'     => 'field-group',
-		'fields'   => array(
-			array(
-				'id'    => 'clean_draft_posts',
-				'label' => __( 'Clean draft posts', 'epfw' ),
-				'type'  => 'checkbox',
-			),
-
-			array(
-				'id'    => 'clean_auto_draft_posts',
-				'label' => __( 'Clean auto draft posts', 'epfw' ),
-				'type'  => 'checkbox',
-			),
-
-			array(
-				'id'    => 'clean_trash_posts',
-				'label' => __( 'Clean trash posts', 'epfw' ),
-				'type'  => 'checkbox',
-			),
-
-			array(
-				'id'    => 'clean_post_revisions',
-				'label' => __( 'Clean post revisions', 'epfw' ),
-				'type'  => 'checkbox',
-			),
-
-			array(
-				'id'    => 'clean_post_meta_data',
-				'label' => __( 'Clean post meta data', 'epfw' ),
-				'type'  => 'checkbox',
-			),
-
-			array(
-				'id'    => 'clean_transient_options',
-				'label' => __( 'Clean transient options', 'epfw' ),
-				'type'  => 'checkbox',
-			),
-
-			array(
-				'id'    => 'clean_trash_comments',
-				'label' => __( 'Clean trash comments', 'epfw' ),
-				'type'  => 'checkbox',
-			),
-
-			array(
-				'id'    => 'clean_spam_comments',
-				'label' => __( 'Clean spam comments', 'epfw' ),
-				'type'  => 'checkbox',
-			),
-		),
-	), // end database
+	); // end general
 
 
-
-	array(
-		'title'  => __( 'Image Optimisation', 'epfw' ),
-		'type'   => 'field-group',
-		'fields' => array(
-
-			array(
-				'id'   => 'shortpixel_recommended',
-				'type' => 'plugin-install',
-			),
-			array(
-				'id'      => 'image_compression',
-				'type'    => 'range-slider',
-				'options' => array(
-					'default' => __( 'WordPress default', 'epfw' ),
-					'10'      => 10,
-					'20'      => 20,
-					'30'      => 30,
-					'40'      => 40,
-					'50'      => 50,
-					'60'      => 60,
-					'70'      => 70,
-					'80'      => 80,
-					'90'      => 90,
-					'100'     => 100,
-				),
-			),
+	$epfw_menu_args = array(
+		'page_title' => __( 'Welcome to EPFW', 'epfw' ),
+		'menu_title' => __( 'Testing', 'epfw' ),
+		'cap'        => 'manage_options',
+		'slug'       => 'sbp_options',
+	);
 
 
-		),
-	),
-
-	array(
-		'tab_name' => __( 'Compress Images', 'epfw' ),
-		'title'    => __( 'LazyLoad', 'epfw' ),
-		'type'     => 'field-group',
-		'fields'   => array(
-			array(
-				'id'        => 'lazy_load',
-				'label'     => __( 'Lazy load images to improve speed', 'epfw' ),
-				'type'      => 'checkbox',
-				'separator' => true,
-			),
-
-			array(
-				'id'        => 'lazy_load_iframes',
-				'label'     => __( 'Lazy load iframes to improve speed', 'epfw' ),
-				'type'      => 'checkbox',
-				'separator' => true,
-			),
-
-			array(
-				'id'        => 'lazy_load_after_onload',
-				'label'     => __( 'LazyLoad after onLoad() event', 'epfw' ),
-				'type'      => 'checkbox',
-				'separator' => true,
-			),
-
-		),
-	), // end compress_images
-
-	array(
-		'tab_name' => __( 'Compress Images', 'epfw' ),
-		'title'    => __( 'LazyLoad', 'epfw' ),
-		'type'     => 'field-group',
-		'fields'   => array(
-			array(
-				'id'    => 'jquery_to_footer',
-				'label' => __( 'Move JS scripts to the footer', 'epfw' ),
-				'type'  => 'text',
-				'group' => 'sbp_settings',
-			),
-			array(
-				'id'    => 'defer_parsing',
-				'label' => __( 'Defer parsing of javascript files', 'epfw' ),
-				'type'  => 'text',
-				'group' => 'sbp_settings',
-			),
-		),
-	), // end advanced
-);
-
-$epfw_menu_args = array(
-	'page_title' => __( 'Welcome to EPFW', 'epfw' ),
-	'menu_title' => __( 'Testing', 'epfw' ),
-	'cap'        => 'manage_options',
-	'slug'       => 'sbp_options',
-);
-
-
-$init = new EPFW_Plugin_Admin_Page( $epfw_fields, $epfw_menu_args );
+		$init = new EPFW_Plugin_Admin_Page( $epfw_fields, $epfw_menu_args );

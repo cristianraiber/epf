@@ -77,40 +77,12 @@
       });
     },
 
-    /**
-     * Function used to instantiate the DialogsManager
-     * It basically creates a "screen" used for displaying the plugin rollback progress
-     */
-    rollback: function () {
-
-      $('.epfw-rollback-button').on('click', function (event) {
-
-        event.preventDefault();
-
-        let dialogsManager = new DialogsManager.Instance();
-
-        dialogsManager.createWidget('confirm', {
-          headerMessage: EPFWAdminConfig.i18n.rollback_to_previous_version,
-          message: EPFWAdminConfig.i18n.rollback_confirm,
-          strings: {
-            confirm: EPFWAdminConfig.i18n.yes,
-            cancel: EPFWAdminConfig.i18n.cancel
-          },
-          onConfirm: function () {
-            $(this).addClass('loading');
-
-            location.href = $(this).attr('href');
-          }
-        }).show();
-      });
-    }
   };
 
   $(document).ready(function () {
     EPFWBackEndObject.admin_postboxes();
     EPFWBackEndObject.admin_tab_switching();
     EPFWBackEndObject.admin_accordions();
-    EPFWBackEndObject.rollback();
   });
 
 })(jQuery);

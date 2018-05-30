@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * @todo: fix add_and_register_options()
  * @todo: fix sanitize callback - sanitize_field
- * @todo: move rollback related code into it's own class file/folder
+ * @todo: really need to figure out the best data structure for the init array as well as passing over it; We need groups of settings
  */
 
 
@@ -83,9 +83,8 @@ class EPFW_Plugin_Admin_Page {
 		add_action( 'admin_enqueue_scripts', array( $this, 'local_backend_styles' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'global_backend_styles' ) );
 
-		//rollback
+		// custom plugin action links
 		add_filter( 'plugin_action_links_' . EPFW__PLUGIN_BASE, array( $this, 'extra_settings_links' ) );
-		add_action( 'admin_post_epfw_rollback', array( $this, 'post_epfw_rollback' ) );
 
 		// custom action hooks
 		add_action( 'epfw_print_form', array( $this, 'print_options_form' ) );
@@ -148,7 +147,7 @@ class EPFW_Plugin_Admin_Page {
 	 */
 	public function add_and_register_options() {
 
-		 /**
+		/**
 		 * @see: https://developer.wordpress.org/reference/functions/register_setting/
 		 *
 		 * <code>
@@ -175,9 +174,9 @@ class EPFW_Plugin_Admin_Page {
 
 		if ( is_array( $this->field_args ) && ! empty( $this->field_args ) ) {
 
-			foreach ( $this->field_args as $settings_array_keys => $settings_array_values ) {
+			foreach ( $this->field_args as $settings_array_values ) {
 
-				/**
+					/**
 					 * @see: https://codex.wordpress.org/Function_Reference/add_settings_section#Parameters
 					 *
 					 * <code>
@@ -193,46 +192,44 @@ class EPFW_Plugin_Admin_Page {
 					 * - No callback function, since we're not using any section descriptions
 					 */
 				add_settings_section(
-					esc_html( (string) $settings_array_values['tab_name'] ),
-					esc_html( $this->format_asset_name( $settings_array_values['tab_name'] ) ),
+					esc_html( (string) $settings_array_values['tab'] ),
+					esc_html( $this->format_asset_name( $settings_array_values['tab'] ) ),
 					null,
 					esc_html( $this->settings_table_name )
 				);
 
-				if ( isset( $settings_array_values['type'] ) &&
-					'field-group' === $settings_array_values['type'] &&
-					isset( $settings_array_values['fields'] ) ) {
-					foreach ( $settings_array_values['fields'] as $inner_array ) {
+				/**
+				 * @see: https://codex.wordpress.org/Function_Reference/add_settings_field
+				 *
+				 * <code>
+				 * add_settings_field(
+				 * (string) (required) $id - String for use in the 'id' attribute of tags.
+				 * (string) (required) $title - Title of the field
+				 * (function) (required) $callback - Name and id of the input should match the $id given to this function. The function should echo its output
+				 * (string) (required) $page - Should match $menu_slug from add_theme_page() or from do_settings_sections().
+				 * (string) (optional) $section - The section of the settings page in which to show the box
+				 * (array) (optional) $args - Additional arguments that are passed to the $callback function
+				 * );
+				 * </code>
+				 *
+				 * - $settings_array['label/title'] - if we're missing the 'label' it means we're looping over the main "well" element title
+				 * - Field callback function; will call render_field() and takes the $settings_array as a param
+				 */
 
-						/**
-					 * @see: https://codex.wordpress.org/Function_Reference/add_settings_field
-					 *
-					 * <code>
-					 * add_settings_field(
-					 * (string) (required) $id - String for use in the 'id' attribute of tags.
-					 * (string) (required) $title - Title of the field
-					 * (function) (required) $callback - Name and id of the input should match the $id given to this function. The function should echo its output
-					 * (string) (required) $page - Should match $menu_slug from add_theme_page() or from do_settings_sections().
-					 * (string) (optional) $section - The section of the settings page in which to show the box
-					 * (array) (optional) $args - Additional arguments that are passed to the $callback function
-					 * );
-					 * </code>
-					 *
-					 * - $settings_array['label/title'] - if we're missing the 'label' it means we're looping over the main "well" element title
-					 * - Field callback function; will call render_field() and takes the $settings_array as a param
-					 */
-						add_settings_field(
-							esc_html( (string) $this->settings_table_name . '[' . $inner_array['id'] . ']' ),
-							isset( $inner_array['label'] ) ? $inner_array['label'] : $inner_array['title'],
-							array(
-								$this,
-								'render_field',
-							),
-							esc_html( $this->settings_table_name ),
-							esc_html( (string) $settings_array_values['tab_name'] ),
-							$settings_array_values
-						);
-					}
+				foreach ( $settings_array_values['fields'] as $field_id => $field_arr_values ) {
+					$_label = isset( $field_arr_values['label'] ) ? $field_arr_values['label'] : $field_arr_values['title'];
+
+					add_settings_field(
+						esc_html( (string) $field_id ),
+						esc_html( (string) $_label ),
+						array(
+							$this,
+							'render_field',
+						),
+						esc_html( $this->settings_table_name ),
+						esc_html( (string) $settings_array_values['tab'] ),
+						$field_arr_values
+					);
 				}
 			}
 		}
@@ -299,29 +296,29 @@ class EPFW_Plugin_Admin_Page {
 	 */
 	public function render_settings_page() { ?>
 
-			<div class="epfw-masthead">
-				<div class="epfw-container">
+				<div class="epfw-masthead">
+					<div class="epfw-container">
+						<?php
+						do_action( 'epfw_print_masthead_before' );
+						do_action( 'epfw_print_masthead' );
+						do_action( 'epfw_print_masthead_after' );
+						?>
+					</div><!--/.epfw-container-->
+				</div><!--/.epfw-admin-top-bar-->
+				<div class="wp-clearfix"></div>
+
+				<div class="wrap epfw-container epfw-wrap">
 					<?php
-					do_action( 'epfw_print_masthead_before' );
-					do_action( 'epfw_print_masthead' );
-					do_action( 'epfw_print_masthead_after' );
+					do_action( 'epfw_print_form_before' );
+					do_action( 'epfw_print_form' );
+					do_action( 'epfw_print_form_after' );
 					?>
-				</div><!--/.epfw-container-->
-			</div><!--/.epfw-admin-top-bar-->
-			<div class="wp-clearfix"></div>
+				</div>
 
-			<div class="wrap epfw-container epfw-wrap">
 				<?php
-				do_action( 'epfw_print_form_before' );
-				do_action( 'epfw_print_form' );
-				do_action( 'epfw_print_form_after' );
-				?>
-			</div>
-
-			<?php
-			do_action( 'epfw_print_changelog_before' );
-			do_action( 'epfw_print_changelog' );
-			do_action( 'epfw_print_changelog_after' );
+				do_action( 'epfw_print_changelog_before' );
+				do_action( 'epfw_print_changelog' );
+				do_action( 'epfw_print_changelog_after' );
 	}
 
 	/**
@@ -339,64 +336,33 @@ class EPFW_Plugin_Admin_Page {
 	 */
 	public function sanitize_field( $input = array() ) {
 
-		//print_r( $input );
-		//exit;
-
-		foreach ( $input as $k => $v ) {
-			$result[] = array_search( $v, $this->field_args );
-		}
-
-		echo '<pre>';
-		print_r( $result );
-		echo '</pre>';
-
-		exit;
+		return $input;
 	}
 
-	function search_items_by_key( $array, $key ) {
-		$results = array();
 
-		if ( is_array( $array ) ) {
-
-			$array = array_flip( $array );
-
-			if ( isset( $array[ $key ] ) && key( $array ) == $key ) {
-				$results[] = $array[ $key ];
-			}
-
-			foreach ( $array as $sub_array ) {
-				$results = array_merge( $results, $this->search_items_by_key( array_flip( $sub_array ), $key ) );
-			}
-		}
-
-		return  $results;
-	}
 
 	/**
- *
- * This is the function responsible with rendering the actual field types
- *
- *
- * @param $args
- */
+	 *
+	 * This is the function responsible with rendering the actual field types
+	 *
+	 *
+	 * @param $args
+	 */
 	public function render_field( $args ) {
 
-		if ( isset( $args['type'] ) ) {
-			switch ( $args['type'] ) {
+		if ( isset( $args['values']['type'] ) ) {
+			switch ( $args['values']['type'] ) {
 				case 'text':
 					$this->render_text_field( $args );
 					break;
 				case 'toggle':
 					$this->render_toggle_field( $args );
 					break;
-				case 'js-script-handler':
-					$this->render_js_scripts_handler_field( $args );
-					break;
 				case 'checkbox':
 					$this->render_checkbox_field( $args );
 					break;
-				case 'field-group':
-					$this->render_group( $args );
+				case 'slide-up-group':
+					$this->render_slide_up_group( $args );
 					break;
 			}
 		}
@@ -416,35 +382,12 @@ class EPFW_Plugin_Admin_Page {
 
 	public function global_backend_scripts( $hook ) {
 
-		// register scripts
-		wp_register_script(
-			'epfw-dialog-script', EPFW__PLUGINS_URL . 'inc/back-end/assets/vendors/dialog/dialog.min.js', array(
-				'jquery',
-			), EPFW__PLUGIN_VERSION, true
-		);
-
 		wp_register_script(
 			'epfw-admin-scripts', EPFW__PLUGINS_URL . 'inc/back-end/assets/js/admin-script.js', array(
 				'jquery',
-				'jquery-ui-accordion',
-				'epfw-dialog-script',
 			), EPFW__PLUGIN_VERSION, true
 		);
 
-		wp_localize_script(
-			'epfw-admin-scripts', 'EPFWAdminConfig', [
-				'home_url' => home_url(),
-				'i18n'     => [
-					'rollback_confirm'             => __( 'Are you sure you want to reinstall previous version?', 'epfw' ),
-					'rollback_to_previous_version' => __( 'Rollback to Previous Version', 'epfw' ),
-					'yes'                          => __( 'Yes', 'epfw' ),
-					'cancel'                       => __( 'Cancel', 'epfw' ),
-				],
-			]
-		);
-
-		// enqueue scripts
-		wp_enqueue_script( 'epfw-dialog-script' );
 		wp_enqueue_script( 'epfw-admin-scripts' );
 
 	}
@@ -575,47 +518,7 @@ class EPFW_Plugin_Admin_Page {
 		}
 	}
 
-	/**
-	 * EPFW version rollback.
-	 *
-	 * Rollback to previous {plugin} version.
-	 *
-	 * Fired by `admin_post_epfw_rollback` action.
-	 *
-	 * @since  1.5.0
-	 * @access public
-	 */
-	public function post_epfw_rollback() {
 
-		check_admin_referer( 'epfw_rollback' );
-
-		$plugin_slug = basename( EPFW__FILE__, '.php' );
-
-		// check for const defines
-		if ( ! defined( 'EPFW__PREVIOUS_PLUGIN_VERSION' ) || ! defined( 'EPFW__PLUGIN_BASE' ) ) {
-			wp_die(
-				new WP_Error( 'broke', esc_html__( 'Previous plugin version or plugin basename CONST aren\'t defined.', 'epfw' ) )
-			);
-		}
-
-		if ( class_exists( 'EPFW_Rollback' ) ) {
-			$rollback = new EPFW_Rollback(
-				[
-					'version'     => EPFW__PREVIOUS_PLUGIN_VERSION,
-					'plugin_name' => EPFW__PLUGIN_BASE,
-					'plugin_slug' => $plugin_slug,
-					'package_url' => sprintf( 'https://downloads.wordpress.org/plugin/%s.%s.zip', $plugin_slug, EPFW__PREVIOUS_PLUGIN_VERSION ),
-				]
-			);
-			$rollback->run();
-		}
-
-		wp_die(
-			'', __( 'Rollback to Previous Version', 'epfw' ), [
-				'response' => 200,
-			]
-		);
-	}
 
 	/**
 	 * Helper function used for formatting asset names
@@ -824,16 +727,16 @@ class EPFW_Plugin_Admin_Page {
 
 		<?php
 
-		$this->_field_description( $args );
+		$this->_field_description( $args['values']['description'] );
 
 		?>
 
-		<?php if ( isset( $args['label'] ) ) { ?>
-			<label for="<?php echo esc_attr( $args['id'] ); ?>"><?php echo esc_html( $args['label'] ); ?></label>
+		<?php if ( isset( $args['values']['label'] ) ) { ?>
+			<label for="<?php echo esc_attr( $args['id'] ); ?>"><?php echo esc_html( $args['values']['label'] ); ?></label>
 		<?php } ?>
 		<br />
-		<?php if ( isset( $args['tooltip'] ) ) { ?>
-			<span class="tooltip-right" data-tooltip="<?php echo esc_attr( $args['tooltip'] ); ?>"> <i class="dashicons dashicons-editor-help"></i></span>
+		<?php if ( isset( $args['values']['tooltip'] ) ) { ?>
+			<span class="tooltip-right" data-tooltip="<?php echo esc_attr( $args['values']['tooltip'] ); ?>"> <i class="dashicons dashicons-editor-help"></i></span>
 		<?php } ?>
 
 		<input id="<?php echo esc_attr( $args['id'] ); ?>" class="regular-text" name="<?php echo esc_attr( 'sbp_settings' ) . '[' . esc_attr( $args['id'] ) . ']'; ?>" type="textarea" value="<?php echo sanitize_text_field( $this->get_option_value( $args['id'], 'sbp_settings' ) ); ?>">
@@ -855,76 +758,40 @@ class EPFW_Plugin_Admin_Page {
 
 		<?php
 
-		$this->_field_description( $args );
+		$this->_field_description( $args['values']['description'] );
 
 		?>
 
 		<input id="<?php echo esc_attr( $args['id'] ); ?>" type="checkbox" name="<?php echo esc_attr( 'sbp_settings' ) . '[' . esc_attr( $args['id'] ) . ']'; ?>" <?php checked( 1, $this->get_option_value( $args['id'], 'sbp_settings' ), true ); ?> value="1">
 
-		<?php if ( isset( $args['label'] ) ) { ?>
-			<label for="<?php echo esc_attr( $args['id'] ); ?>"><?php echo esc_html( $args['label'] ); ?></label>
+		<?php if ( isset( $args['values']['label'] ) ) { ?>
+			<label for="<?php echo esc_attr( $args['id'] ); ?>"><?php echo esc_html( $args['values']['label'] ); ?></label>
 		<?php } ?>
-		<?php if ( isset( $args['tooltip'] ) ) { ?>
-			<span class="tooltip-right" data-tooltip="<?php echo esc_attr( $args['tooltip'] ); ?>"> <i class="dashicons dashicons-info"></i></span>
+		<?php if ( isset( $args['values']['tooltip'] ) ) { ?>
+			<span class="tooltip-right" data-tooltip="<?php echo esc_attr( $args['values']['tooltip'] ); ?>"> <i class="dashicons dashicons-info"></i></span>
 		<?php } ?>
-		<?php if ( isset( $args['description'] ) ) { ?>
-			<div class="description"><i><?php echo esc_html( $args['description'] ); ?></i></div>
+		<?php if ( isset( $args['values']['description'] ) ) { ?>
+			<div class="description"><i><?php echo esc_html( $args['values']['description'] ); ?></i></div>
 		<?php } ?>
 
 		</div><!--/.epfw-field-->
 
-		<?php if ( isset( $args['separator'] ) ) { ?>
+		<?php if ( isset( $args['values']['separator'] ) ) { ?>
 			<div class="epfw-separator"></div>
 		<?php } ?>
 
 	<?php
 	}
 
-	/**
-	 * @param $args
-	 */
-	public function render_js_scripts_handler_field( $args ) {
-
-		if ( $this->check_for_db_schema( $args ) !== false ) {
-			?>
-
-			<?php if ( $this->_db_field_type == 'array' ) { ?>
-				<input class="regular-text" name="<?php echo esc_attr( $this->_save_in_db_field ); ?>" type="text" value="<?php echo sanitize_text_field( $this->get_option_value( $args['id'], $this->_save_in_db_field ) ); ?>">
-			<?php } else { ?>
-				<input class="regular-text" name="<?php echo esc_attr( $this->_save_in_db_field ); ?>" type="text" value="<?php echo sanitize_text_field( $this->get_option_value( '', $this->_save_in_db_field ) ); ?>">
-			<?php } ?>
-
-			<?php
-		}
-	}
-
-	public function render_group( $args ) {
-
-		if ( isset( $args['fields'] ) ) {
-			foreach ( $args['fields'] as $key => $value ) {
-
-				if ( isset( $value['type'] ) ) {
-					if ( $value['type'] == 'text' ) {
-						$this->render_text_field( $value );
-					}
-
-					if ( $value['type'] == 'checkbox' ) {
-						$this->render_checkbox_field( $value );
-					}
-
-					if ( $value['type'] == 'slide-up-group' ) {
-						$this->render_slide_up_group( $value );
-					}
-				}
-			}
-		}
-
-	}
 
 	/**
 	 * @param $args
 	 */
 	public function render_slide_up_group( $args ) {
+
+		echo '<pre>';
+		print_r( $args );
+		echo '</pre>';
 
 		echo '<div id="' . esc_attr( $args['id'] ) . '" class="epfw-field-slide-up-wrapper">';
 		echo '<div class="epfw-field-slide-up-header">';
