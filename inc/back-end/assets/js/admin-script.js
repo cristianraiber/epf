@@ -72,6 +72,7 @@
           }
 
           $(clicked_tab).fadeIn(150);
+          event.preventDefault();
 
         });
       });

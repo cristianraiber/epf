@@ -61,7 +61,7 @@ class EPFW_Plugin_RollBack {
 		);
 	}
 
-	public function rollback_scripts( $hook ) {
+	public function rollback_scripts() {
 
 		// register scripts
 		wp_register_script(
