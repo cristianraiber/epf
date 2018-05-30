@@ -23,18 +23,18 @@
      */
     admin_accordions: function () {
 
-      let main_wrapper = '.epfw-field-slide-up-wrapper'; // the main wrapper
+      let main_wrapper = '.epfw-field-slide-up-header'; // the main wrapper
       let accordion_wrapper = '.epfw-accordion-wrapper'; // actual accordion wrapper, that is nested and holds the actual contents
       let accordion_visibility = 'epfw-accordion-visible'; // not a CSS selector, but an existing CSS class that adds display: none
 
-      $(main_wrapper).click(function () {
+      $(main_wrapper).on('click', function () {
 
-        if ($(this).hasClass(accordion_visibility)) {
-          $(this).removeClass(accordion_visibility);
-          $(this).find(accordion_wrapper).hide(250);
+        if ($(this).parent().hasClass(accordion_visibility)) {
+          $(this).parent().removeClass(accordion_visibility);
+          $(this).parent().find(accordion_wrapper).hide(250);
         } else {
-          $(this).addClass(accordion_visibility);
-          $(this).find(accordion_wrapper).show(250);
+          $(this).parent().addClass(accordion_visibility);
+          $(this).parent().find(accordion_wrapper).show(250);
         }
       });
     },
