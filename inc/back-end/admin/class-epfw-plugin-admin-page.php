@@ -378,9 +378,6 @@ class EPFW_Plugin_Admin_Page {
 		if ( $hook !== $this->page_hook_suffix ) {
 			return;
 		}
-	}
-
-	public function global_backend_scripts( $hook ) {
 
 		wp_register_script(
 			'epfw-admin-scripts', EPFW__PLUGINS_URL . 'inc/back-end/assets/js/admin-script.js', array(
@@ -389,6 +386,9 @@ class EPFW_Plugin_Admin_Page {
 		);
 
 		wp_enqueue_script( 'epfw-admin-scripts' );
+	}
+
+	public function global_backend_scripts( $hook ) {
 
 	}
 
